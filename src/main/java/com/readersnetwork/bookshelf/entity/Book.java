@@ -9,7 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "books")
+@Table(name = "books", indexes = {
+        @Index(name = "idx_isbn", columnList = "isbn"),
+        @Index(name = "idx_title_author", columnList = "title,author"),
+        @Index(name = "idx_google_books_id", columnList = "google_books_id")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,8 +30,16 @@ public class Book {
     @Column(nullable = false, length = 255)
     private String author;
 
+    // ISBN-13 or ISBN-10 (unique identifier for books)
     @Column(unique = true, length = 13)
     private String isbn;
+
+    // External API identifiers (for avoiding duplicates)
+    @Column(name = "google_books_id", unique = true, length = 50)
+    private String googleBooksId; // e.g., "zyTCAlFPjgYC"
+
+    @Column(name = "open_library_id", length = 50)
+    private String openLibraryId; // e.g., "OL7353617M"
 
     @Column(name = "cover_url")
     private String coverUrl;
@@ -43,6 +55,21 @@ public class Book {
 
     @Column(name = "page_count")
     private Integer pageCount;
+
+    @Column(length = 100)
+    private String publisher;
+
+    @Column(length = 50)
+    private String language; // e.g., "en", "es", "fr"
+
+    // Track where the book came from
+    @Enumerated(EnumType.STRING)
+    @Column(name = "source", length = 30)
+    private BookSource source; // GOOGLE_BOOKS, OPEN_LIBRARY, MANUAL_ENTRY
+
+    @Builder.Default
+    @Column(name = "is_verified")
+    private Boolean isVerified = false; // Manually verified by admin
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
