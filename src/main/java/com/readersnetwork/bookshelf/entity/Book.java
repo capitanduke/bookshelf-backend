@@ -56,6 +56,9 @@ public class Book {
     @Column(name = "page_count")
     private Integer pageCount;
 
+    @Column(name = "average_rating")
+    private Double averageRating;
+
     @Column(length = 100)
     private String publisher;
 

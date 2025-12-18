@@ -27,8 +27,11 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false)
-    private String password; // Will be encrypted
+    @Column(nullable = false, name = "password_hash")
+    private String passwordHash; // Will be encrypted
+
+    @Column(name = "display_name", length = 100)
+    private String displayName;
 
     @Column(length = 500)
     private String bio;
@@ -38,6 +41,10 @@ public class User {
 
     @Column(name = "favorite_genres")
     private String favoriteGenres; // Comma-separated or JSON
+
+    @Builder.Default
+    @Column(name = "is_private")
+    private Boolean isPrivate = false;
 
     @Builder.Default
     @Column(name = "is_active")
