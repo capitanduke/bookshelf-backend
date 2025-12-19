@@ -37,6 +37,12 @@ public class Review {
     @Column(nullable = false, length = 5000)
     private String content;
 
+    @Column(length = 100)
+    private String title;
+
+    @Column(name = "contains_spoilers")
+    private Boolean containsSpoilers; // Default handled by DB or Service if null, but let's use wrapper Boolean
+
     @Builder.Default
     @Column(name = "like_count")
     private Integer likeCount = 0;

@@ -1,13 +1,12 @@
 package com.readersnetwork.bookshelf.dto.response;
 
+import com.readersnetwork.bookshelf.entity.BookSource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -19,15 +18,18 @@ public class BookResponse {
     private String title;
     private String author;
     private String isbn;
-    private LocalDate publicationDate;
-    private String publisher;
-    private Integer pageCount;
-    private String language;
+    private String googleBooksId;
+    private String openLibraryId;
+    private String coverUrl;
     private String description;
-    private String coverImageUrl;
-    private Set<String> genres;
+    private Integer publishedYear;
+    private String genre;
+    private Integer pageCount;
     private Double averageRating;
-    private Integer reviewCount;
+    private String publisher;
+    private String language;
+    private BookSource source;
+    private Boolean isVerified;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
