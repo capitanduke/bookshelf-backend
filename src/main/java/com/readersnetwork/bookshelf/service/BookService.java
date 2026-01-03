@@ -2,6 +2,7 @@ package com.readersnetwork.bookshelf.service;
 
 import com.readersnetwork.bookshelf.entity.Book;
 import com.readersnetwork.bookshelf.entity.BookSource;
+import com.readersnetwork.bookshelf.exception.BookNotFoundException;
 import com.readersnetwork.bookshelf.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,10 @@ public class BookService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    // ============================================
+    // SEARCH & API INTEGRATION
+    // ============================================
 
     /**
      * MAIN METHOD: Search for a book
@@ -51,7 +56,7 @@ public class BookService {
         Book bookFromApi = fetchFromGoogleBooks(searchQuery);
 
         if (bookFromApi == null) {
-            throw new RuntimeException("Book not found: " + searchQuery);
+            throw new BookNotFoundException("Book not found: " + searchQuery);
         }
 
         // Step 3: Before saving, check if another user just added this book
@@ -80,6 +85,166 @@ public class BookService {
     public Page<Book> searchBooks(String query, Pageable pageable) {
         return bookRepository.searchBooks(query, pageable);
     }
+
+    /**
+     * Advanced search with filters
+     * Use this for: "Show me Fantasy books from 2020"
+     */
+    public Page<Book> advancedSearch(String title, String author, String genre, Integer year, Pageable pageable) {
+        return bookRepository.advancedSearch(title, author, genre, year, pageable);
+    }
+
+    // ============================================
+    // MANUAL BOOK CREATION (NEW METHODS)
+    // ============================================
+
+    /**
+     * Create a book manually (when user can't find it in APIs)
+     * This checks for duplicates before saving
+     */
+    @Transactional
+    public Book createBookManually(Book book) {
+        // Check for duplicates using all available identifiers
+        Optional<Book> duplicate = bookRepository.findByAnyIdentifier(
+                book.getIsbn(),
+                book.getGoogleBooksId(),
+                book.getOpenLibraryId(),
+                book.getTitle(),
+                book.getAuthor());
+
+        if (duplicate.isPresent()) {
+            throw new RuntimeException("Book already exists in database with ID: " + duplicate.get().getId());
+        }
+
+        // Set default values
+        if (book.getSource() == null) {
+            book.setSource(BookSource.MANUAL_ENTRY);
+        }
+        if (book.getAverageRating() == null) {
+            book.setAverageRating(0.0);
+        }
+        if (book.getIsVerified() == null) {
+            book.setIsVerified(false); // Manual entries need admin verification
+        }
+
+        return bookRepository.save(book);
+    }
+
+    /**
+     * Update an existing book
+     */
+    @Transactional
+    public Book updateBook(Book book) {
+        if (book.getId() == null) {
+            throw new IllegalArgumentException("Book ID cannot be null for update");
+        }
+
+        // Verify book exists
+        if (!bookRepository.existsById(book.getId())) {
+            throw new BookNotFoundException("Book not found with id: " + book.getId());
+        }
+
+        return bookRepository.save(book);
+    }
+
+    /**
+     * Delete a book (admin only)
+     * Note: This will cascade delete all related reviews, user books, etc.
+     */
+    @Transactional
+    public void deleteBook(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Book ID cannot be null");
+        }
+
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+
+        bookRepository.delete(book);
+    }
+
+    /**
+     * Verify a book (mark as verified by admin)
+     */
+    @Transactional
+    public Book verifyBook(Long id) {
+        Book book = getBookById(id);
+        book.setIsVerified(true);
+        return bookRepository.save(book);
+    }
+
+    /**
+     * Get all books (paginated, for admin panel)
+     */
+    public Page<Book> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable);
+    }
+
+    // ============================================
+    // BASIC CRUD OPERATIONS
+    // ============================================
+
+    /**
+     * Get book by ID (for book details page)
+     */
+    public Book getBookById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Book ID cannot be null");
+        }
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+    }
+
+    /**
+     * Check if book exists by ISBN
+     */
+    public boolean existsByIsbn(String isbn) {
+        return bookRepository.existsByIsbn(isbn);
+    }
+
+    // ============================================
+    // DISCOVERY & RECOMMENDATIONS
+    // ============================================
+
+    /**
+     * Get books by genre
+     */
+    public Page<Book> getBooksByGenre(String genre, Pageable pageable) {
+        return bookRepository.findByGenre(genre, pageable);
+    }
+
+    /**
+     * Get most reviewed books (popular books)
+     */
+    public Page<Book> getMostReviewedBooks(Pageable pageable) {
+        return bookRepository.findMostReviewedBooks(pageable);
+    }
+
+    /**
+     * Get highest rated books (quality books with at least X reviews)
+     */
+    public Page<Book> getHighestRatedBooks(long minReviews, Pageable pageable) {
+        return bookRepository.findHighestRatedBooks(minReviews, pageable);
+    }
+
+    /**
+     * Get recently added books (new arrivals)
+     */
+    public Page<Book> getRecentlyAddedBooks(Pageable pageable) {
+        return bookRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    /**
+     * Get trending books (most reviewed in last 30 days)
+     */
+    public List<Book> getTrendingBooks(Pageable pageable) {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return bookRepository.findTrendingBooks(thirtyDaysAgo, pageable);
+    }
+
+    // ============================================
+    // GOOGLE BOOKS API INTEGRATION (PRIVATE)
+    // ============================================
 
     /**
      * Fetch book data from Google Books API
@@ -169,72 +334,6 @@ public class BookService {
             return null;
         }
         return categories.get(0);
-    }
-
-    // ============================================
-    // OTHER USEFUL METHODS
-    // ============================================
-
-    /**
-     * Get book by ID (for book details page)
-     */
-    public Book getBookById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Book ID cannot be null");
-        }
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
-    }
-
-    /**
-     * Advanced search with filters
-     * Use this for: "Show me Fantasy books from 2020"
-     */
-    public Page<Book> advancedSearch(String title, String author, String genre, Integer year, Pageable pageable) {
-        return bookRepository.advancedSearch(title, author, genre, year, pageable);
-    }
-
-    /**
-     * Get books by genre
-     */
-    public Page<Book> getBooksByGenre(String genre, Pageable pageable) {
-        return bookRepository.findByGenre(genre, pageable);
-    }
-
-    /**
-     * Get most reviewed books (popular books)
-     */
-    public Page<Book> getMostReviewedBooks(Pageable pageable) {
-        return bookRepository.findMostReviewedBooks(pageable);
-    }
-
-    /**
-     * Get highest rated books (quality books with at least X reviews)
-     */
-    public Page<Book> getHighestRatedBooks(long minReviews, Pageable pageable) {
-        return bookRepository.findHighestRatedBooks(minReviews, pageable);
-    }
-
-    /**
-     * Get recently added books (new arrivals)
-     */
-    public Page<Book> getRecentlyAddedBooks(Pageable pageable) {
-        return bookRepository.findAllByOrderByCreatedAtDesc(pageable);
-    }
-
-    /**
-     * Get trending books (most reviewed in last 30 days)
-     */
-    public List<Book> getTrendingBooks(Pageable pageable) {
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-        return bookRepository.findTrendingBooks(thirtyDaysAgo, pageable);
-    }
-
-    /**
-     * Check if book exists by ISBN
-     */
-    public boolean existsByIsbn(String isbn) {
-        return bookRepository.existsByIsbn(isbn);
     }
 
     // ============================================
