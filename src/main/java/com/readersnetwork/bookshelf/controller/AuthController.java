@@ -29,6 +29,9 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.readersnetwork.bookshelf.security.JwtTokenProvider jwtTokenProvider;
+
     /**
      * Register a new user
      * POST /api/auth/register
@@ -51,9 +54,9 @@ public class AuthController {
                         request.getProfilePictureUrl());
             }
 
-            // Create response with user info and mock token
+            // Create response with user info and JWT token
             LoginResponse response = new LoginResponse();
-            response.setToken("mock-jwt-token-" + user.getId());
+            response.setToken(jwtTokenProvider.generateTokenFromUsername(user.getUsername()));
             response.setTokenType("Bearer");
             response.setUserId(user.getId());
             response.setUsername(user.getUsername());
@@ -96,9 +99,9 @@ public class AuthController {
                         .body(createErrorResponse("Invalid credentials"));
             }
 
-            // Create response with user info and mock token
+            // Create response with user info and JWT token
             LoginResponse response = new LoginResponse();
-            response.setToken("mock-jwt-token-" + user.getId());
+            response.setToken(jwtTokenProvider.generateTokenFromUsername(user.getUsername()));
             response.setTokenType("Bearer");
             response.setUserId(user.getId());
             response.setUsername(user.getUsername());
