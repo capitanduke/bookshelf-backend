@@ -1,0 +1,25 @@
+meta {
+  name: Popular Reviews for Book
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/reviews/book/1/popular?page=0&size=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: 0
+  size: 10
+}
+
+docs {
+  Replace '1' in the URL with the target book ID.
+  Returns reviews sorted by like count (most popular first).
+}

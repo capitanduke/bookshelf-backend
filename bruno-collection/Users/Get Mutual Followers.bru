@@ -1,0 +1,19 @@
+meta {
+  name: Get Mutual Followers
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{baseUrl}}/api/users/2/mutual-followers
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Replace '2' with the target user ID to see mutual followers between you and that user.
+}

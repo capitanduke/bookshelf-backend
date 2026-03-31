@@ -1,0 +1,15 @@
+meta {
+  name: Trending Books
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/api/books/trending?size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  size: 10
+}

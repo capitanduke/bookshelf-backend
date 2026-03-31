@@ -1,0 +1,19 @@
+meta {
+  name: Unfollow User
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/api/users/2/follow
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Replace '2' in the URL with the ID of the user you want to unfollow.
+}

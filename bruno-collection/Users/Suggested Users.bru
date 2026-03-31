@@ -1,0 +1,20 @@
+meta {
+  name: Suggested Users
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/api/users/suggestions?page=0&size=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: 0
+  size: 10
+}

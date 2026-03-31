@@ -1,0 +1,16 @@
+meta {
+  name: Get Books by Genre
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/books/genre/Fiction?page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 0
+  size: 10
+}

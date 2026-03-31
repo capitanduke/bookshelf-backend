@@ -1,0 +1,21 @@
+meta {
+  name: Search Users
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/users/search?query=test&page=0&size=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  query: test
+  page: 0
+  size: 20
+}

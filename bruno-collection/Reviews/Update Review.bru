@@ -1,0 +1,28 @@
+meta {
+  name: Update Review
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/api/reviews/{{reviewId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "rating": 4,
+    "title": "Updated review title",
+    "content": "Updated content after re-reading the book.",
+    "containsSpoilers": true
+  }
+}
+
+docs {
+  Only the author of the review can update it.
+}

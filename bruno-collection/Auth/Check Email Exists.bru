@@ -1,0 +1,15 @@
+meta {
+  name: Check Email Exists
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/auth/check-email?email=testuser@example.com
+  body: none
+  auth: none
+}
+
+params:query {
+  email: testuser@example.com
+}

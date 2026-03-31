@@ -1,0 +1,24 @@
+meta {
+  name: Get Reviews for Book
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/reviews/book/1?page=0&size=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: 0
+  size: 10
+}
+
+docs {
+  Replace '1' in the URL with the target book ID.
+}

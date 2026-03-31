@@ -1,0 +1,23 @@
+meta {
+  name: Update Profile
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/users/{{userId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "fullName": "Updated Name",
+    "bio": "Updated bio for the test user",
+    "profilePictureUrl": "https://example.com/avatar.jpg"
+  }
+}

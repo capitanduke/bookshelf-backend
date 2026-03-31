@@ -1,0 +1,21 @@
+meta {
+  name: Update Privacy Settings
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/users/{{userId}}/privacy
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "isPrivate": true
+  }
+}

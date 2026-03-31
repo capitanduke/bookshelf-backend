@@ -1,0 +1,25 @@
+meta {
+  name: Reviews from Following
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/reviews/following?page=0&size=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: 0
+  size: 10
+}
+
+docs {
+  Returns reviews posted by users you follow.
+  Requires at least following one user who has posted reviews.
+}

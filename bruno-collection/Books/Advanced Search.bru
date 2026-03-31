@@ -1,0 +1,20 @@
+meta {
+  name: Advanced Search
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/books/advanced-search?title=gatsby&author=&genre=&year=&page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  title: gatsby
+  author: 
+  genre: 
+  year: 
+  page: 0
+  size: 10
+}
