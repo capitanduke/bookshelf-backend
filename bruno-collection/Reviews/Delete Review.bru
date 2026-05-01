@@ -1,0 +1,20 @@
+meta {
+  name: Delete Review
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/reviews/{{reviewId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Only the author of the review can delete it.
+  Returns 204 No Content on success.
+}

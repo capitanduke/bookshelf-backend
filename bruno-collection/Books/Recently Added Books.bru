@@ -1,0 +1,16 @@
+meta {
+  name: Recently Added Books
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/api/books/recent?page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 0
+  size: 10
+}

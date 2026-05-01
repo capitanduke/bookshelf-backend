@@ -1,0 +1,20 @@
+meta {
+  name: Toggle Like
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/api/reviews/{{reviewId}}/likes/toggle
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Toggles the like status. If already liked, it unlikes. If not liked, it likes.
+  Returns { "liked": true/false, "message": "..." }
+}

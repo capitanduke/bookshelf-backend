@@ -1,0 +1,20 @@
+meta {
+  name: Verify Book (ADMIN)
+  type: http
+  seq: 13
+}
+
+put {
+  url: {{baseUrl}}/api/books/{{bookId}}/verify
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  WARNING: This endpoint requires ADMIN role, but no user is ever assigned ADMIN role.
+  This will always return 403 Forbidden. This is a known bug.
+}

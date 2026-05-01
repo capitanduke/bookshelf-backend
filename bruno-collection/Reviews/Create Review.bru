@@ -1,0 +1,36 @@
+meta {
+  name: Create Review
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/reviews
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "bookId": 1,
+    "rating": 5,
+    "title": "An absolute masterpiece",
+    "content": "This book changed my perspective on literature. Highly recommend!",
+    "containsSpoilers": false
+  }
+}
+
+script:post-response {
+  if (res.status === 201 || res.status === 200) {
+    bru.setVar("reviewId", res.body.id);
+  }
+}
+
+docs {
+  Use a valid bookId from the seeded books (1-15) or one you created.
+  Each user can only review a book once (unique constraint on user_id + book_id).
+}

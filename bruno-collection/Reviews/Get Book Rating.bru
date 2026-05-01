@@ -1,0 +1,20 @@
+meta {
+  name: Get Book Rating
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/reviews/book/1/rating
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Replace '1' in the URL with the target book ID.
+  Returns { "averageRating": 4.5, "reviewCount": 10 }
+}

@@ -1,0 +1,36 @@
+meta {
+  name: Update Book (ADMIN)
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/books/7
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "title": "Harry Potter and the Sorcerer's Stone (Updated)",
+    "author": "J.K. Rowling",
+    "isbn": "9780590353427",
+    "publicationDate": "1997-06-26",
+    "publisher": "Bloomsbury",
+    "pageCount": 309,
+    "language": "English",
+    "description": "Updated description for Harry Potter.",
+    "coverImageUrl": "",
+    "genres": ["Fantasy", "Young Adult"]
+  }
+}
+
+docs {
+  This endpoint requires ADMIN role.
+  To test: set the user's role to 'ADMIN' in the database first.
+  Regular users will receive 403 Forbidden.
+}

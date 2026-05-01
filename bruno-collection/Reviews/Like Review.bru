@@ -1,0 +1,15 @@
+meta {
+  name: Like Review
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/reviews/{{reviewId}}/likes
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

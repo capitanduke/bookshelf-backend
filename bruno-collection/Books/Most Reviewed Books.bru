@@ -1,0 +1,16 @@
+meta {
+  name: Most Reviewed Books
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/books/most-reviewed?page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 0
+  size: 10
+}

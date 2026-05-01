@@ -1,0 +1,15 @@
+meta {
+  name: Search Book (Google Books)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/books/search?query=Harry Potter
+  body: none
+  auth: none
+}
+
+params:query {
+  query: Harry Potter
+}

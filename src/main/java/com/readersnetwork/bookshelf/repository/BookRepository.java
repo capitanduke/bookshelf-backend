@@ -54,16 +54,17 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Page<Book> findByGenre(String genre, Pageable pageable);
 
-    // Search books by title or author (fuzzy search)
+    // Search books by title, author, or genre (fuzzy search)
     @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%'))")
+            "OR LOWER(b.author) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Book> searchBooks(@Param("query") String query, Pageable pageable);
 
     // Advanced search with multiple filters
     @Query("SELECT b FROM Book b WHERE " +
             "(:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
             "(:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))) AND " +
-            "(:genre IS NULL OR b.genre = :genre) AND " +
+            "(:genre IS NULL OR LOWER(b.genre) LIKE LOWER(CONCAT('%', :genre, '%'))) AND " +
             "(:year IS NULL OR b.publishedYear = :year)")
     Page<Book> advancedSearch(@Param("title") String title,
             @Param("author") String author,

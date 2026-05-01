@@ -1,0 +1,11 @@
+meta {
+  name: Check ISBN Exists
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{baseUrl}}/api/books/check-isbn/9780743273565
+  body: none
+  auth: none
+}

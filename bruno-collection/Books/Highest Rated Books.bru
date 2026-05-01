@@ -1,0 +1,17 @@
+meta {
+  name: Highest Rated Books
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/books/highest-rated?minReviews=5&page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  minReviews: 5
+  page: 0
+  size: 10
+}

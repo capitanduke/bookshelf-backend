@@ -1,0 +1,15 @@
+meta {
+  name: Check Username Exists
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/auth/check-username?username=testuser
+  body: none
+  auth: none
+}
+
+params:query {
+  username: testuser
+}
